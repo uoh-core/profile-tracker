@@ -4,20 +4,16 @@ const fs = require('fs').promises;
 const path = require('path');
 require('dotenv').config();
 
-// Paths
+// path
 const REPO_ROOT = path.join(__dirname, '..');
 const HTML_FILE = path.join(REPO_ROOT, 'index.html');
 
-// Configuration
+// config
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const CHECK_INTERVAL = process.env.CHECK_INTERVAL_HOURS || 1;
 
 class DiscordMonitor {
     constructor() {
-        if (!DISCORD_TOKEN || DISCORD_TOKEN === 'your_token_here') {
-            console.log('⚠️  Using template token - will show as invalid');
-        }
-        
         this.headers = {
             'Authorization': DISCORD_TOKEN,
             'Content-Type': 'application/json'
@@ -26,11 +22,10 @@ class DiscordMonitor {
 
     async checkToken() {
         try {
-            // If using template token, simulate invalid
-            if (!DISCORD_TOKEN || DISCORD_TOKEN === 'your_token_here') {
+            if (!DISCORD_TOKEN) {
                 return {
                     valid: false,
-                    reason: 'template_token',
+                    reason: 'no_provided_token',
                     status: 'invalid'
                 };
             }
@@ -117,14 +112,14 @@ class DiscordMonitor {
                 `;
             }
 
-            // Update using regex pattern
+            // update using regex pattern
             const statusPattern = /<!-- STATUS_START -->[\s\S]*?<!-- STATUS_END -->/;
             const replacement = `<!-- STATUS_START -->\n${statusHtml}\n<!-- STATUS_END -->`;
             
             if (statusPattern.test(html)) {
                 html = html.replace(statusPattern, replacement);
             } else {
-                console.log('⚠️  Status markers not found, appending to body');
+                console.log('⚠️ Status markers not found, appending to body');
                 const bodyCloseIndex = html.lastIndexOf('</body>');
                 if (bodyCloseIndex !== -1) {
                     html = html.slice(0, bodyCloseIndex) + statusHtml + html.slice(bodyCloseIndex);
@@ -135,7 +130,6 @@ class DiscordMonitor {
 
             await fs.writeFile(HTML_FILE, html, 'utf8');
             console.log(`✅ HTML updated`);
-
         } catch (error) {
             console.error('❌ Error updating HTML:', error.message);
         }
@@ -171,7 +165,7 @@ class DiscordMonitor {
         console.log('🚀 Discord Account Monitor');
         console.log('─'.repeat(40));
         
-        // Run immediately
+        // Initial run
         this.runCheck();
         
         // Schedule subsequent runs
@@ -183,7 +177,7 @@ class DiscordMonitor {
     }
 }
 
-// Run the monitor
+// Start monitoring
 try {
     const monitor = new DiscordMonitor();
     monitor.start();
