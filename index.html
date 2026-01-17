@@ -6,11 +6,34 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Discord Profile</h1>
-    <p><strong>Username:</strong> YourUsername#1234</p>
-    <p><strong>Status:</strong> Online</p>
-    <p><strong>Bio:</strong> Add your bio here.</p>
-    <p><strong>Joined:</strong> 2023</p>
-    <p><strong>Contact:</strong> Discord direct message</p>
+    <h1>current profile</h1>
+    <p><strong>index</strong> 44th index</p>
+    <p><strong>tag:</strong> @44.uoh</p>
+    <p><strong>user id:</strong> <span id="userId">1461968023673110734</span></p>
+    <p><strong>account created:</strong> <span id="creationDate">converting snowflake to date</span></p>
+    
+    <script>
+        function snowflakeToDate(snowflake) {
+            // discord epoch: January 1, 2015
+            const discordEpoch = 1420070400000;
+            // convert snowflake to timestamp
+            const timestamp = Math.floor(snowflake / 4194304) + discordEpoch;
+            // create date object
+            const date = new Date(timestamp);
+            // format date nicely
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZoneName: 'short'
+            });
+        }
+        const userId = document.getElementById('userId').textContent;
+        const snowflake = BigInt(userId);
+        const creationDate = snowflakeToDate(Number(snowflake));
+        document.getElementById('creationDate').textContent = creationDate;
+    </script>
 </body>
 </html>
