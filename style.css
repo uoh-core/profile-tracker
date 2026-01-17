@@ -1,24 +1,8 @@
-/* Minimalist Discord Profile */
-
 body {
     font-family: monospace;
-    background: #2f3136;
-    color: white;
-    padding: 20px;
+    background: #222;
+    color: #ddd;
+    padding: 40px;
     max-width: 500px;
     margin: auto;
-    line-height: 1.5;
-}
-
-h1 {
-    color: #7289da;
-    margin-bottom: 20px;
-}
-
-p {
-    margin: 10px 0;
-}
-
-strong {
-    color: #b9bbbe;
 }
