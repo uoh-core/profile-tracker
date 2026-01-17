@@ -10,7 +10,7 @@ const HTML_FILE = path.join(REPO_ROOT, 'index.html');
 
 // config
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const CHECK_INTERVAL = process.env.CHECK_INTERVAL_HOURS || 1;
+const CHECK_INTERVAL = process.env.CHECK_INTERVAL_HOURS;
 
 class DiscordMonitor {
     constructor() {
