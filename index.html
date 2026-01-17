@@ -1,47 +1,53 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Discord Profile</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <h1>current profile</h1>
     <p><strong>index</strong> 44th index</p>
     <p><strong>tag:</strong> @44.uoh</p>
     <p><strong>user id:</strong> <span id="userId">1461968023673110734</span></p>
     <p><strong>account created:</strong> <span id="creationDate">converting snowflake to date</span></p>
-    
+
     <!-- STATUS_START -->
 
-                <div class="status-section">
-                    <p><strong>account status:</strong> <span style="color: #43b581;">● Active</span></p>
-                    <p><strong>last checked:</strong> Jan 17, 2026, 09:10 AM UTC</p>
-                    <p><em>updated automatically every 1 hour(s)</em></p>
-                </div>
-                
-<!-- STATUS_END -->
-    
+    <div class="status-section">
+        <p><strong>account status:</strong> <span style="color: #43b581;">● Active</span></p>
+        <p><strong>last checked:</strong> Jan 17, 2026, 09:10 AM UTC</p>
+        <p><em>updated automatically every 1 hour(s)</em></p>
+    </div>
+
+    <!-- STATUS_END -->
+
     <script>
         // Snowflake to date conversion
         function snowflakeToDate(snowflake) {
             const discordEpoch = 1420070400000;
             const timestamp = Math.floor(snowflake / 4194304) + discordEpoch;
             const date = new Date(timestamp);
-            return date.toLocaleDateString('en-US', {
+            const formatter = new Intl.DateTimeFormat('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
+                hour12: false,
+                timeZone: 'UTC',
                 timeZoneName: 'short'
             });
+            return formatter.format(date);
         }
-        
+
         const userId = document.getElementById('userId').textContent;
         const snowflake = BigInt(userId);
         const creationDate = snowflakeToDate(Number(snowflake));
         document.getElementById('creationDate').textContent = creationDate;
     </script>
 </body>
+
 </html>
