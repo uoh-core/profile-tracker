@@ -7,7 +7,6 @@ require('dotenv').config();
 // Paths
 const REPO_ROOT = path.join(__dirname, '..');
 const HTML_FILE = path.join(REPO_ROOT, 'index.html');
-const STATUS_FILE = path.join(REPO_ROOT, 'status.json');
 
 // Configuration
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -15,8 +14,8 @@ const CHECK_INTERVAL = process.env.CHECK_INTERVAL_HOURS || 1;
 
 class DiscordMonitor {
     constructor() {
-        if (!DISCORD_TOKEN) {
-            throw new Error('DISCORD_TOKEN not set in .env file');
+        if (!DISCORD_TOKEN || DISCORD_TOKEN === 'your_token_here') {
+            console.log('⚠️  Using template token - will show as invalid');
         }
         
         this.headers = {
@@ -27,32 +26,40 @@ class DiscordMonitor {
 
     async checkToken() {
         try {
+            // If using template token, simulate invalid
+            if (!DISCORD_TOKEN || DISCORD_TOKEN === 'your_token_here') {
+                return {
+                    valid: false,
+                    reason: 'template_token',
+                    status: 'invalid'
+                };
+            }
+
             const response = await axios.get('https://discord.com/api/v9/users/@me', {
-                headers: this.headers
+                headers: this.headers,
+                timeout: 10000
             });
 
             if (response.status === 200) {
-                const user = response.data;
                 return {
                     valid: true,
-                    username: `${user.username}#${user.discriminator}`,
-                    userId: user.id,
-                    avatar: user.avatar,
-                    premiumType: user.premium_type || 0,
                     status: 'active'
                 };
             }
         } catch (error) {
             if (error.response) {
-                // Discord API returned an error
                 return {
                     valid: false,
-                    statusCode: error.response.status,
                     reason: this.getReasonFromStatusCode(error.response.status),
                     status: 'invalid'
                 };
+            } else if (error.code === 'ECONNABORTED') {
+                return {
+                    valid: false,
+                    reason: 'timeout',
+                    status: 'error'
+                };
             } else {
-                // Network error
                 return {
                     valid: false,
                     reason: 'network_error',
@@ -75,14 +82,16 @@ class DiscordMonitor {
 
     async updateHTML(statusData) {
         try {
-            // Read current HTML
             let html = await fs.readFile(HTML_FILE, 'utf8');
             
-            const timestamp = new Date().toISOString();
-            const localTime = new Date().toLocaleString('en-US', {
+            const now = new Date();
+            const localTime = now.toLocaleString('en-US', {
                 timeZone: 'UTC',
-                dateStyle: 'full',
-                timeStyle: 'short'
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
 
             let statusHtml;
@@ -95,9 +104,13 @@ class DiscordMonitor {
                 </div>
                 `;
             } else {
+                const reason = statusData.reason === 'template_token' 
+                    ? 'setup_required (add real token to .env)' 
+                    : statusData.reason;
+                    
                 statusHtml = `
                 <div class="status-section">
-                    <p><strong>account status:</strong> <span style="color: #f04747;">● ${statusData.reason}</span></p>
+                    <p><strong>account status:</strong> <span style="color: #f04747;">● ${reason}</span></p>
                     <p><strong>last checked:</strong> ${localTime} UTC</p>
                     <p><em>updated automatically every ${CHECK_INTERVAL} hour(s)</em></p>
                 </div>
@@ -111,21 +124,17 @@ class DiscordMonitor {
             if (statusPattern.test(html)) {
                 html = html.replace(statusPattern, replacement);
             } else {
-                // Fallback: append before closing body tag
+                console.log('⚠️  Status markers not found, appending to body');
                 const bodyCloseIndex = html.lastIndexOf('</body>');
-                html = html.slice(0, bodyCloseIndex) + statusHtml + html.slice(bodyCloseIndex);
+                if (bodyCloseIndex !== -1) {
+                    html = html.slice(0, bodyCloseIndex) + statusHtml + html.slice(bodyCloseIndex);
+                } else {
+                    html += statusHtml;
+                }
             }
 
-            // Write updated HTML
             await fs.writeFile(HTML_FILE, html, 'utf8');
-            console.log(`✅ HTML updated at ${new Date().toISOString()}`);
-
-            // Also save status to JSON file for backup
-            await fs.writeFile(STATUS_FILE, JSON.stringify({
-                ...statusData,
-                lastUpdated: timestamp,
-                nextCheck: new Date(Date.now() + CHECK_INTERVAL * 3600000).toISOString()
-            }, null, 2));
+            console.log(`✅ HTML updated`);
 
         } catch (error) {
             console.error('❌ Error updating HTML:', error.message);
@@ -137,24 +146,17 @@ class DiscordMonitor {
             const simpleGit = require('simple-git');
             const git = simpleGit(REPO_ROOT);
             
-            // Check if there are changes
-            const status = await git.status();
-            
-            if (status.modified.length > 0 || status.not_added.length > 0) {
-                await git.add('.');
-                await git.commit(`Update account status - ${new Date().toISOString()}`);
-                await git.push();
-                console.log(`🚀 Changes pushed to GitHub at ${new Date().toISOString()}`);
-            } else {
-                console.log('📭 No changes to commit');
-            }
+            await git.add('.');
+            await git.commit(`Update: ${new Date().toISOString()}`);
+            await git.push();
+            console.log(`✅ Pushed to GitHub`);
         } catch (error) {
             console.error('❌ Git error:', error.message);
         }
     }
 
     async runCheck() {
-        console.log(`\n🔍 Checking Discord token at ${new Date().toISOString()}...`);
+        console.log(`\n⏰ ${new Date().toLocaleTimeString()} - Checking...`);
         
         const status = await this.checkToken();
         console.log(status.valid ? '✅ Token valid' : `❌ Token invalid: ${status.reason}`);
@@ -162,33 +164,35 @@ class DiscordMonitor {
         await this.updateHTML(status);
         await this.commitAndPush();
         
-        console.log(`⏰ Next check in ${CHECK_INTERVAL} hour(s)...\n`);
+        console.log(`⏰ Next check in ${CHECK_INTERVAL} hour(s)`);
     }
 
     start() {
-        console.log('🚀 Discord Account Monitor Started');
-        console.log('=' .repeat(50));
-        console.log(`Token: ${DISCORD_TOKEN.substring(0, 10)}...`);
-        console.log(`Check interval: ${CHECK_INTERVAL} hour(s)`);
-        console.log('=' .repeat(50));
+        console.log('🚀 Discord Account Monitor');
+        console.log('─'.repeat(40));
         
         // Run immediately
         this.runCheck();
         
         // Schedule subsequent runs
-        const cronPattern = `0 */${CHECK_INTERVAL} * * *`; // Every X hours
+        const cronPattern = `0 */${CHECK_INTERVAL} * * *`;
         cron.schedule(cronPattern, () => this.runCheck());
         
-        console.log(`⏰ Scheduled with pattern: ${cronPattern}\n`);
+        console.log(`⏰ Scheduled: every ${CHECK_INTERVAL} hour(s)`);
+        console.log('─'.repeat(40));
     }
 }
 
 // Run the monitor
-const monitor = new DiscordMonitor();
-monitor.start();
+try {
+    const monitor = new DiscordMonitor();
+    monitor.start();
+} catch (error) {
+    console.error('❌ Failed to start:', error.message);
+}
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-    console.log('\n👋 Shutting down monitor...');
+    console.log('\n👋 Shutting down...');
     process.exit(0);
 });
