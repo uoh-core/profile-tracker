@@ -1,0 +1,116 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #7289da, #36393f);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 400px;
+    width: 100%;
+}
+
+.profile-card {
+    background: #2f3136;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.profile-header {
+    background: #202225;
+    padding: 30px 20px;
+    text-align: center;
+    position: relative;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 5px solid #7289da;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.username {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.status {
+    color: #43b581;
+    font-size: 14px;
+}
+
+.profile-content {
+    padding: 25px;
+}
+
+section {
+    margin-bottom: 25px;
+}
+
+h2 {
+    color: white;
+    font-size: 18px;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #7289da;
+}
+
+p, .info-item {
+    color: #b9bbbe;
+    line-height: 1.6;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.info-item i {
+    color: #7289da;
+    margin-right: 10px;
+    width: 20px;
+}
+
+.social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.discord-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #7289da;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.discord-link:hover {
+    background: #5b6eae;
+}
+
+.discord-link i {
+    margin-right: 8px;
+    font-size: 20px;
+}
