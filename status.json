@@ -1,0 +1,8 @@
+{
+  "valid": false,
+  "statusCode": 401,
+  "reason": "unauthorized",
+  "status": "invalid",
+  "lastUpdated": "2026-01-17T08:00:43.025Z",
+  "nextCheck": "2026-01-17T09:00:43.026Z"
+}

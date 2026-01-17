@@ -7,7 +7,7 @@ require('dotenv').config();
 // Paths
 const REPO_ROOT = path.join(__dirname, '..');
 const HTML_FILE = path.join(REPO_ROOT, 'index.html');
-const STATUS_FILE = path.join(__PO_ROOT, 'status.json');
+const STATUS_FILE = path.join(REPO_ROOT, 'status.json');
 
 // Configuration
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
