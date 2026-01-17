@@ -12,15 +12,21 @@
     <p><strong>user id:</strong> <span id="userId">1461968023673110734</span></p>
     <p><strong>account created:</strong> <span id="creationDate">converting snowflake to date</span></p>
     
+    <!-- STATUS_START -->
+    <!-- This section will be updated by the monitor script -->
+    <div class="status-section">
+        <p><strong>account status:</strong> <span style="color: #888;">● Initializing monitor...</span></p>
+        <p><strong>last checked:</strong> Starting up...</p>
+        <p><em>updated automatically every hour</em></p>
+    </div>
+    <!-- STATUS_END -->
+    
     <script>
+        // Snowflake to date conversion
         function snowflakeToDate(snowflake) {
-            // discord epoch: January 1, 2015
             const discordEpoch = 1420070400000;
-            // convert snowflake to timestamp
             const timestamp = Math.floor(snowflake / 4194304) + discordEpoch;
-            // create date object
             const date = new Date(timestamp);
-            // format date nicely
             return date.toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
@@ -30,6 +36,7 @@
                 timeZoneName: 'short'
             });
         }
+        
         const userId = document.getElementById('userId').textContent;
         const snowflake = BigInt(userId);
         const creationDate = snowflakeToDate(Number(snowflake));
