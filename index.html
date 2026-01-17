@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
     <title>Discord Profile</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
     <h1>current profile</h1>
-    <p><strong>index</strong> 44th index</p>
+    <p><strong>index:</strong> 44th index</p>
     <p><strong>tag:</strong> @44.uoh</p>
     <p><strong>user id:</strong> <span id="userId">1461968023673110734</span></p>
     <p><strong>account created:</strong> <span id="creationDate">converting snowflake to date</span></p>
 
     <!-- STATUS_START -->
 
-                <div class="status-section">
-                    <p><strong>account status:</strong> <span style="color: #43b581;">● Active</span></p>
-                    <p><strong>last checked:</strong> Jan 17, 2026, 09:28 AM UTC</p>
-                    <p><em>updated automatically every 1 hour(s)</em></p>
-                </div>
-                
-<!-- STATUS_END -->
+    <div class="status-section">
+        <p><strong>account status:</strong> <span style="color: #43b581;">● Active</span></p>
+        <p><strong>last checked:</strong> Jan 17, 2026, 09:28 AM UTC</p>
+        <p><em>updated automatically every 1 hour(s)</em></p>
+    </div>
+
+    <!-- STATUS_END -->
+
+    <p class="cute-gap">planning on implementing the functionality allowing me to feed my token and directly retrieve
+        tag, user id & account creation without having to manually edit the fields except for manually incrementing the
+        index, passing the token and archiving old profiles.</p>
 
     <script>
-        // Snowflake to date conversion
         function snowflakeToDate(snowflake) {
             const discordEpoch = 1420070400000;
             const timestamp = Math.floor(snowflake / 4194304) + discordEpoch;
@@ -42,12 +43,10 @@
             });
             return formatter.format(date);
         }
-
         const userId = document.getElementById('userId').textContent;
         const snowflake = BigInt(userId);
         const creationDate = snowflakeToDate(Number(snowflake));
         document.getElementById('creationDate').textContent = creationDate;
     </script>
 </body>
-
 </html>
