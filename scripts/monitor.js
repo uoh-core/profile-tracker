@@ -248,7 +248,7 @@ class DiscordMonitor {
                     <p><strong>account created:</strong> ${account.creationDate}</p>
                     <p><strong>status:</strong> <span style="color: ${statusColor}">${statusText}</span></p>
                     ${account.lastError ? `<p><em>Error: ${account.lastError}</em></p>` : ''}
-                    <p><small>Last updated: ${new Date(account.lastUpdated).toLocaleString('en-US', { timeZone: 'UTC' })} UTC</small></p>
+                    <p><strong>Last updated: ${new Date(account.lastUpdated).toLocaleString('en-US', { timeZone: 'UTC' })} UTC</strong></p>
                 </div>
                 `;
             });
