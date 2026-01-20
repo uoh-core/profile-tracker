@@ -3,98 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <title>( ,,⩌'︿'⩌,,)</title>
-    <link rel="stylesheet" href="style.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: monospace;
             background: #262626;
             color: #ddd;
-            padding: 20px;
-            max-width: 1200px;
-            margin: auto;
             line-height: 1.5;
+            padding: 20px;
+            min-height: 100vh;
         }
         
-        .container {
-            display: flex;
-            gap: 40px;
-            flex-wrap: wrap;
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
-        .left-column {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .right-column {
-            flex: 1;
-            min-width: 300px;
-            padding-left: 30px;
+        .center {
+            display: block;
+            margin: 0 auto 20px auto;
+            width: 50%;
+            max-width: 300px;
         }
         
         h1 {
             color: #5865F2;
+            font-size: 28px;
             margin-bottom: 10px;
-            font-size: 24px;
-            text-align: center;
+        }
+        
+        /* Main container with 3 equal columns */
+        .main-container {
+            display: flex;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            align-items: flex-start;
+        }
+        
+        /* Each column takes equal space */
+        .column {
+            flex: 1;
+            min-width: 0;
+            padding: 25px;
+            background: #1e1f22;
+            border-radius: 12px;
+            border: 2px solid #2f3136;
         }
         
         h2 {
             color: #b9bbbe;
-            margin-top: 30px;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
             border-bottom: 4px solid #5865F2;
-            padding-bottom: 5px;
-            font-size: 18px;
+            padding-bottom: 10px;
+            font-size: 22px;
         }
         
+        /* About column */
+        .about-section p {
+            margin-bottom: 20px;
+        }
+        
+        /* Account column */
         .account-card {
-            background: #1e1f22;
+            background: #222427;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
             border-left: 4px solid #5865F2;
-            line-height: 1.0;
         }
         
         .account-card h3 {
-            margin-top: 0;
             color: white;
+            margin-bottom: 10px;
+            font-size: 18px;
         }
         
         .status-info {
-            background: #1e1f22;
-            padding: 15px;
+            background: #222427;
+            padding: 20px;
             border-radius: 8px;
-            margin: 20px 0;
-            line-height: 1.0;
+            margin-bottom: 25px;
         }
         
-        .cute-gap {
-            margin-top: 30px;
-            margin-bottom: 20px;
-        }
-        
-        iframe {
-            margin-top: 20px;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 350px;
-        }
-        
-        /* Blog post styling */
+        /* Blog column */
         .blog-post {
-            background: #1e1f22;
+            background: #222427;
             border-radius: 8px;
             padding: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             border-left: 4px solid #ff6b9d;
         }
         
         .blog-post h3 {
             color: #ff6b9d;
-            margin-top: 0;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-size: 18px;
         }
         
@@ -104,93 +115,141 @@
             margin-bottom: 15px;
             font-style: italic;
         }
-
-        .center {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            width: 50%;
+        
+        /* Discord widget */
+        iframe {
+            width: 100%;
+            height: 400px;
+            border-radius: 8px;
+            border: none;
+            margin-top: 20px;
         }
         
         /* Responsive design */
-        @media (max-width: 768px) {
-            .container {
+        @media (max-width: 1200px) {
+            .main-container {
                 flex-direction: column;
+                max-width: 800px;
             }
             
-            .right-column {
-                border-left: none;
-                border-top: 2px solid #5865F2;
-                padding-left: 0;
-                padding-top: 30px;
-                margin-top: 30px;
+            .column {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .column {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            h2 {
+                font-size: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <img src="https://count.getloli.com/@uoh-core?name=uoh-core&theme=gelbooru&padding=7&offset=0&align=center&scale=1&pixelated=1&darkmode=auto" alt=":name" class="center"/>
-    <h1>account tracking & some blogposting</h1>
+    <div class="header">
+        <img src="https://count.getloli.com/@uoh-core?name=uoh-core&theme=gelbooru&padding=7&offset=0&align=center&scale=1&pixelated=1&darkmode=auto" alt=":name" class="center"/>
+        <h1>account tracking & some blogposting</h1>
+    </div>
     
-    <div class="container">
-        <!-- LEFT COLUMN: Account tracking -->
-        <div class="left-column">
+    <!-- Three equal columns -->
+    <div class="main-container">
+        <!-- COLUMN 1: About This Site -->
+        <div class="column" id="about">
+            <h2>about this site</h2>
+            
+            <div class="about-section">
+                <p>I use this site primarily for making communication easier but also for some blogposting. I came to the conclusion of making this website primarily due to discord's policies and state of using AI and other algorithmic procedures to assist its moderation. Certain patterns & speech can suspend your account even if no ill intention is present, and I have yet to elaborate on that matter through blogposting which will come soon.</p>
+                
+                <p>The main functionality behind this site is that I feed tokens locally and validate them via a discord endpoint, and then automate git push requests to update the static page with the response data which contains my account status.</p>
+                
+                <p>Through the server widget below, you can join my discord server whose purpose is to stay in touch with friends but also banter & discuss topics such as otaku/bishoujo/moe culture, music related topics & some tech related stuff as well.</p>
+                
+                <iframe src="https://discord.com/widget?id=1462029605387899023&theme=dark" allowtransparency="true" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+            </div>
+        </div>
+        
+        <!-- COLUMN 2: Account Tracking -->
+        <div class="column" id="accounts">
             <h2>account tracking</h2>
-
+            
             
             <div class="status-info">
-                <p><strong>Last checked:</strong> Jan 20, 2026, 12:04 PM UTC</p>
+                <p><strong>Last checked:</strong> Jan 20, 2026, 12:40 PM UTC</p>
                 <p><strong>Total accounts:</strong> 3</p>
                 <p><strong>Active accounts:</strong> 2</p>
                 <p><em>Updated automatically every 1 hour(s)</em></p>
             </div>
             
+            <div class="status-info">
+                <p><strong>Last checked:</strong> Loading...</p>
+                <p><strong>Total accounts:</strong> Loading...</p>
+                <p><strong>Active accounts:</strong> Loading...</p>
+            </div>
             
             
                 <div class="account-card">
-                    <h3>47th index</h3>
-                    <p><strong>tag:</strong> @47.uoh</p>
-                    <p><strong>user id:</strong> 1463112216231411712</p>
-                    <p><strong>account created:</strong> January 20, 2026 at 10:05 UTC</p>
-                    <p><strong>status:</strong> <span style="color: #43b581">● Active</span></p>
-                    
-                    <p><strong>Last updated: 1/20/2026, 12:04:26 PM UTC</strong></p>
+                <h3>47th index</h3>
+                <p><strong>tag:</strong> @47.uoh</p>
+                <p><strong>user id:</strong> 1463112216231411712</p>
+                <p><strong>account created:</strong> January 20, 2026 at 10:05 UTC</p>
+                <p><strong>status:</strong> <span style="color: #43b581">● Active</span></p>
+                
+                <p><strong>Last updated: 1/20/2026, 12:40:30 PM UTC</strong></p>
                 </div>
                 
                 <div class="account-card">
-                    <h3>45th index</h3>
-                    <p><strong>tag:</strong> @45.uoh</p>
-                    <p><strong>user id:</strong> 1463080923946942587</p>
-                    <p><strong>account created:</strong> January 20, 2026 at 08:01 UTC</p>
-                    <p><strong>status:</strong> <span style="color: #f04747">● Invalid</span></p>
-                    <p><em>Error: unauthorized</em></p>
-                    <p><strong>Last updated: 1/20/2026, 12:04:25 PM UTC</strong></p>
+                <h3>45th index</h3>
+                <p><strong>tag:</strong> @45.uoh</p>
+                <p><strong>user id:</strong> 1463080923946942587</p>
+                <p><strong>account created:</strong> January 20, 2026 at 08:01 UTC</p>
+                <p><strong>status:</strong> <span style="color: #f04747">● Invalid</span></p>
+                <p><em>Error: unauthorized</em></p>
+                <p><strong>Last updated: 1/20/2026, 12:40:30 PM UTC</strong></p>
                 </div>
                 
                 <div class="account-card">
-                    <h3>44th index</h3>
-                    <p><strong>tag:</strong> @44.uoh</p>
-                    <p><strong>user id:</strong> 1461968023673110734</p>
-                    <p><strong>account created:</strong> January 17, 2026 at 06:18 UTC</p>
-                    <p><strong>status:</strong> <span style="color: #43b581">● Active</span></p>
-                    
-                    <p><strong>Last updated: 1/20/2026, 12:04:25 PM UTC</strong></p>
+                <h3>44th index</h3>
+                <p><strong>tag:</strong> @44.uoh</p>
+                <p><strong>user id:</strong> 1461968023673110734</p>
+                <p><strong>account created:</strong> January 17, 2026 at 06:18 UTC</p>
+                <p><strong>status:</strong> <span style="color: #43b581">● Active</span></p>
+                
+                <p><strong>Last updated: 1/20/2026, 12:40:29 PM UTC</strong></p>
                 </div>
                 
+            <div class="account-card">
+                <h3>Loading accounts...</h3>
+                <p><strong>tag:</strong> Loading...</p>
+                <p><strong>user id:</strong> Loading...</p>
+                <p><strong>account created:</strong> Loading...</p>
+                <p><strong>status:</strong> <span style="color: #888">● Loading...</span></p>
+            </div>
             
-            <div class="cute-gap">
-                <h2>about this site</h2>
-                <p>I use this site primarily for making communication easier but also for some blogposting. I came to the conclusion of making this website primarily due to discord's policies and state of using AI and other algorithmic procedures to assist its moderation. Certain patterns & speech can suspend your account even if no ill intention is present, and I have yet to elaborate on that matter through blogposting which will come soon.</p>
-                <p>The main functionality behind this site is that I feed tokens locally and validate them via a discord endpoint, and then automate git push requests to update the static page with the response data which contains my account status.</p>
-                <p>Through the server widget below, you can join my discord server whose purpose is to stay in touch with friends but also banter & discuss topics such as otaku/bishoujo/moe culture, music related topics & some tech related stuff as well.</p>
-                <iframe src="https://discord.com/widget?id=1462029605387899023&theme=dark" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+            <div class="info-note">
+                <p><em>This section is automatically updated every hour. Invalid tokens keep their last known data.</em></p>
             </div>
         </div>
         
-        <!-- RIGHT COLUMN: Blog posts -->
-        <div class="right-column">
+        <!-- COLUMN 3: Blog Posts -->
+        <div class="column" id="blog">
             <h2>blog posts</h2>
-            
+            <div class="blog-post">
+                <h3>regarding @45.uoh & @46.uoh</h3>
+                <div class="post-meta">20/01/2026</div>
+                <p>Iteration @45.uoh & @46.uoh has been suspended as I figured I can no longer register accounts under Mullvad VPN because every time I do so, I get phonelocked after joining a certain server through its vanity URL.</p>
+                <p>I also figured that putting an URL in my bio will flag my account as "spam" and force me to re-verify my email for some reason, so I'll have to use the pronouns field and eventually shorten the URL to get around the character limit.</p>
+            </div>
             <div class="blog-post">
                 <h3>regarding @44.uoh</h3>
                 <div class="post-meta">20/01/2026</div>
@@ -199,37 +258,7 @@
                 <p>Since the account standing system is designed in a way where catching another child safety warning would get you suspended, I have decided not to take the risk and chose to make a new account which is now the 45th iteration.</p>
                 <p><strong>Moral of the story:</strong> The system cannot tell context, and do not attempt to call out certain behaviour as that will likely land you a child safety strike especially if assisted through visuals like the GIF in my case.</p>
             </div>
-            
-            <div class="blog-post">
-                <h3>regarding @45.uoh & @46.uoh</h3>
-                <div class="post-meta">20/01/2026</div>
-                <p>Iteration @45.uoh & @46.uoh has been suspended as I figured I can no longer register accounts under Mullvad VPN because every time I do so, I get phonelocked after joining a certain server through its vanity URL.</p>
-                <p>I also figured that putting an URL in my bio will flag my account as "spam" and force me to re-verify my email for some reason, so I'll have to use the pronouns field and eventually shorten the URL to get around the character limit.</p>
-            </div>
-            
-            <div class="blog-post">
-                <h3>changes</h3>
-                <div class="post-meta">20/01/2026</div>
-                <p>planning on adding cute images to the left because why not. also planning on adding a counter like that of a booru</p>
-            </div>
         </div>
     </div>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Discord Profiles loaded');
-            
-            // Optional: Add some interactivity
-            const blogPosts = document.querySelectorAll('.blog-post');
-            blogPosts.forEach(post => {
-                post.addEventListener('click', function() {
-                    this.style.transform = 'translateX(5px)';
-                    setTimeout(() => {
-                        this.style.transform = 'translateX(0)';
-                    }, 200);
-                });
-            });
-        });
-    </script>
 </body>
 </html>

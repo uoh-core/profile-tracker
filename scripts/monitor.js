@@ -235,23 +235,21 @@ class DiscordMonitor {
             // Generate accounts HTML
             let accountsHtml = '';
             accountsArray.forEach(account => {
-                const statusColor = account.status === 'active' ? '#43b581' : 
-                                  account.status === 'invalid' ? '#f04747' : '#faa61a';
-                const statusText = account.status === 'active' ? '● Active' : 
-                                  account.status === 'invalid' ? '● Invalid' : '● Unknown';
+                const statusColor = account.status === 'active' ? '#43b581' : account.status === 'invalid' ? '#f04747' : '#faa61a';
+                const statusText = account.status === 'active' ? '● Active' : account.status === 'invalid' ? '● Invalid' : '● Unknown';
                 
                 accountsHtml += `
                 <div class="account-card">
-                    <h3>${account.index}</h3>
-                    <p><strong>tag:</strong> ${account.tag}</p>
-                    <p><strong>user id:</strong> ${account.userId}</p>
-                    <p><strong>account created:</strong> ${account.creationDate}</p>
-                    <p><strong>status:</strong> <span style="color: ${statusColor}">${statusText}</span></p>
-                    ${account.lastError ? `<p><em>Error: ${account.lastError}</em></p>` : ''}
-                    <p><strong>Last updated: ${new Date(account.lastUpdated).toLocaleString('en-US', { timeZone: 'UTC' })} UTC</strong></p>
+                <h3>${account.index}</h3>
+                <p><strong>tag:</strong> ${account.tag}</p>
+                <p><strong>user id:</strong> ${account.userId}</p>
+                <p><strong>account created:</strong> ${account.creationDate}</p>
+                <p><strong>status:</strong> <span style="color: ${statusColor}">${statusText}</span></p>
+                ${account.lastError ? `<p><em>Error: ${account.lastError}</em></p>` : ''}
+                <p><strong>Last updated: ${new Date(account.lastUpdated).toLocaleString('en-US', { timeZone: 'UTC' })} UTC</strong></p>
                 </div>
                 `;
-            });
+});
 
             // Replace placeholders in template
             html = html.replace('<!-- STATUS_INFO_PLACEHOLDER -->', statusInfoHtml);
