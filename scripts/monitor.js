@@ -225,7 +225,6 @@ class DiscordMonitor {
             <p><strong>Last checked:</strong> ${localTime} UTC</p>
             <p><strong>Total accounts:</strong> ${accountsArray.length}</p>
             <p><strong>Active accounts:</strong> ${activeCount}</p>
-            <p><em>Updated automatically every ${CHECK_INTERVAL} hour(s)</em></p>
         </div>
         `;
 
