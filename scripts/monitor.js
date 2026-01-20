@@ -4,28 +4,29 @@ const fs = require('fs').promises;
 const path = require('path');
 require('dotenv').config();
 
-// path
+// Paths
 const REPO_ROOT = path.join(__dirname, '..');
 const HTML_FILE = path.join(REPO_ROOT, 'index.html');
 
-// config
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const CHECK_INTERVAL = process.env.CHECK_INTERVAL_HOURS;
+// Configuration - get all tokens from env
+const DISCORD_TOKEN_44 = process.env.DISCORD_TOKEN_44;
+const CURRENT_TOKEN = DISCORD_TOKEN_44;
+const CHECK_INTERVAL = process.env.CHECK_INTERVAL_HOURS || 1;
 
 class DiscordMonitor {
     constructor() {
         this.headers = {
-            'Authorization': DISCORD_TOKEN,
+            'Authorization': CURRENT_TOKEN,
             'Content-Type': 'application/json'
         };
     }
 
-    async checkToken() {
+    async fetchAccountInfo() {
         try {
-            if (!DISCORD_TOKEN) {
+            if (!CURRENT_TOKEN) {
                 return {
-                    valid: false,
-                    reason: 'no_provided_token',
+                    success: false,
+                    error: 'No token provided in .env',
                     status: 'invalid'
                 };
             }
@@ -36,32 +37,67 @@ class DiscordMonitor {
             });
 
             if (response.status === 200) {
+                const user = response.data;
+                
+                // Extract index from username (assuming format like "44.uoh")
+                const usernameMatch = user.username.match(/^(\d+)/);
+                const index = usernameMatch ? `${usernameMatch[1]}th index` : 'Unknown index';
+                
+                // Format tag
+                const tag = `@${user.username}`;
+                
+                // Calculate account creation date from user ID (snowflake)
+                const creationDate = this.snowflakeToDate(user.id);
+                
                 return {
-                    valid: true,
-                    status: 'active'
+                    success: true,
+                    data: {
+                        index: index,
+                        tag: tag,
+                        userId: user.id,
+                        username: user.username,
+                        discriminator: user.discriminator,
+                        creationDate: creationDate,
+                        avatar: user.avatar,
+                        status: 'active'
+                    }
                 };
             }
         } catch (error) {
             if (error.response) {
                 return {
-                    valid: false,
-                    reason: this.getReasonFromStatusCode(error.response.status),
+                    success: false,
+                    error: this.getReasonFromStatusCode(error.response.status),
                     status: 'invalid'
-                };
-            } else if (error.code === 'ECONNABORTED') {
-                return {
-                    valid: false,
-                    reason: 'timeout',
-                    status: 'error'
                 };
             } else {
                 return {
-                    valid: false,
-                    reason: 'network_error',
+                    success: false,
+                    error: 'network_error',
                     status: 'error'
                 };
             }
         }
+    }
+
+    // Convert Discord snowflake ID to creation date
+    snowflakeToDate(snowflake) {
+        const discordEpoch = 1420070400000;
+        const timestamp = Math.floor(snowflake / 4194304) + discordEpoch;
+        const date = new Date(timestamp);
+        
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: 'UTC',
+            timeZoneName: 'short'
+        });
+        
+        return formatter.format(date);
     }
 
     getReasonFromStatusCode(statusCode) {
@@ -75,7 +111,7 @@ class DiscordMonitor {
         return reasons[statusCode] || 'unknown_error';
     }
 
-    async updateHTML(statusData) {
+    async updateHTML(accountInfo) {
         try {
             let html = await fs.readFile(HTML_FILE, 'utf8');
             
@@ -89,47 +125,60 @@ class DiscordMonitor {
                 minute: '2-digit'
             });
 
-            let statusHtml;
-            if (statusData.valid) {
-                statusHtml = `
+            if (accountInfo.success) {
+                const data = accountInfo.data;
+                
+                // Update the entire profile section
+                const profilePattern = /<h1>current profile<\/h1>[\s\S]*?<!-- STATUS_START -->/;
+                const profileReplacement = `<h1>current profile</h1>
+    <p><strong>index:</strong> ${data.index}</p>
+    <p><strong>tag:</strong> ${data.tag}</p>
+    <p><strong>user id:</strong> <span id="userId">${data.userId}</span></p>
+    <p><strong>account created:</strong> <span id="creationDate">${data.creationDate}</span></p>
+
+    <!-- STATUS_START -->`;
+                
+                if (profilePattern.test(html)) {
+                    html = html.replace(profilePattern, profileReplacement);
+                }
+                
+                // Update status section
+                const statusHtml = `
                 <div class="status-section">
                     <p><strong>account status:</strong> <span style="color: #43b581;">● Active</span></p>
                     <p><strong>last checked:</strong> ${localTime} UTC</p>
                     <p><em>updated automatically every ${CHECK_INTERVAL} hour(s)</em></p>
                 </div>
                 `;
+                
+                const statusPattern = /<!-- STATUS_START -->[\s\S]*?<!-- STATUS_END -->/;
+                const statusReplacement = `<!-- STATUS_START -->\n${statusHtml}\n<!-- STATUS_END -->`;
+                
+                if (statusPattern.test(html)) {
+                    html = html.replace(statusPattern, statusReplacement);
+                }
+                
             } else {
-                const reason = statusData.reason === 'template_token' 
-                    ? 'setup_required (add real token to .env)' 
-                    : statusData.reason;
-                    
-                statusHtml = `
+                // Token is invalid
+                const statusHtml = `
                 <div class="status-section">
-                    <p><strong>account status:</strong> <span style="color: #f04747;">● ${reason}</span></p>
+                    <p><strong>account status:</strong> <span style="color: #f04747;">● ${accountInfo.error}</span></p>
                     <p><strong>last checked:</strong> ${localTime} UTC</p>
                     <p><em>updated automatically every ${CHECK_INTERVAL} hour(s)</em></p>
                 </div>
                 `;
-            }
-
-            // update using regex pattern
-            const statusPattern = /<!-- STATUS_START -->[\s\S]*?<!-- STATUS_END -->/;
-            const replacement = `<!-- STATUS_START -->\n${statusHtml}\n<!-- STATUS_END -->`;
-            
-            if (statusPattern.test(html)) {
-                html = html.replace(statusPattern, replacement);
-            } else {
-                console.log('⚠️ Status markers not found, appending to body');
-                const bodyCloseIndex = html.lastIndexOf('</body>');
-                if (bodyCloseIndex !== -1) {
-                    html = html.slice(0, bodyCloseIndex) + statusHtml + html.slice(bodyCloseIndex);
-                } else {
-                    html += statusHtml;
+                
+                const statusPattern = /<!-- STATUS_START -->[\s\S]*?<!-- STATUS_END -->/;
+                const statusReplacement = `<!-- STATUS_START -->\n${statusHtml}\n<!-- STATUS_END -->`;
+                
+                if (statusPattern.test(html)) {
+                    html = html.replace(statusPattern, statusReplacement);
                 }
             }
 
             await fs.writeFile(HTML_FILE, html, 'utf8');
-            console.log(`✅ HTML updated`);
+            console.log(`✅ HTML updated with account data`);
+            
         } catch (error) {
             console.error('❌ Error updating HTML:', error.message);
         }
@@ -150,12 +199,21 @@ class DiscordMonitor {
     }
 
     async runCheck() {
-        console.log(`\n⏰ ${new Date().toLocaleTimeString()} - Checking...`);
+        console.log(`\n⏰ ${new Date().toLocaleTimeString()} - Fetching account info...`);
         
-        const status = await this.checkToken();
-        console.log(status.valid ? '✅ Token valid' : `❌ Token invalid: ${status.reason}`);
+        const accountInfo = await this.fetchAccountInfo();
         
-        await this.updateHTML(status);
+        if (accountInfo.success) {
+            console.log(`✅ Account info retrieved:`);
+            console.log(`   Index: ${accountInfo.data.index}`);
+            console.log(`   Tag: ${accountInfo.data.tag}`);
+            console.log(`   User ID: ${accountInfo.data.userId}`);
+            console.log(`   Created: ${accountInfo.data.creationDate}`);
+        } else {
+            console.log(`❌ Failed: ${accountInfo.error}`);
+        }
+        
+        await this.updateHTML(accountInfo);
         await this.commitAndPush();
         
         console.log(`⏰ Next check in ${CHECK_INTERVAL} hour(s)`);
@@ -163,6 +221,9 @@ class DiscordMonitor {
 
     start() {
         console.log('🚀 Discord Account Monitor');
+        console.log('─'.repeat(40));
+        console.log(`Fetching data from token: ${CURRENT_TOKEN ? '✓ Set' : '✗ Missing'}`);
+        console.log(`Check interval: ${CHECK_INTERVAL} hour(s)`);
         console.log('─'.repeat(40));
         
         // Initial run
