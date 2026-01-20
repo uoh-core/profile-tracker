@@ -16,7 +16,7 @@
 
                 <div class="status-section">
                     <p><strong>account status:</strong> <span style="color: #43b581;">● Active</span></p>
-                    <p><strong>last checked:</strong> Jan 20, 2026, 08:16 AM UTC</p>
+                    <p><strong>last checked:</strong> Jan 20, 2026, 08:18 AM UTC</p>
                     <p><em>updated automatically every 1 hour(s)</em></p>
                 </div>
                 
@@ -27,28 +27,5 @@
     <p class="cute-gap">as for this site, I am planning on implementing more comfortable functionality allowing me to feed my token and directly retrieve
         tag, user id & account creation without having to manually edit the fields in the html except for manually incrementing the
         index, passing the token on my backend and archiving old profiles.</p>
-
-    <script>
-        function snowflakeToDate(snowflake) {
-            const discordEpoch = 1420070400000;
-            const timestamp = Math.floor(snowflake / 4194304) + discordEpoch;
-            const date = new Date(timestamp);
-            const formatter = new Intl.DateTimeFormat('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-                timeZone: 'UTC',
-                timeZoneName: 'short'
-            });
-            return formatter.format(date);
-        }
-        const userId = document.getElementById('userId').textContent;
-        const snowflake = BigInt(userId);
-        const creationDate = snowflakeToDate(Number(snowflake));
-        document.getElementById('creationDate').textContent = creationDate;
-    </script>
 </body>
 </html>
