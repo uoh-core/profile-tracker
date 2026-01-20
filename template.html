@@ -10,73 +10,176 @@
             background: #262626;
             color: #ddd;
             padding: 20px;
-            max-width: 800px;
+            max-width: 1200px;
             margin: auto;
             line-height: 1.5;
         }
+        
+        .container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .left-column {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .right-column {
+            flex: 1;
+            min-width: 300px;
+            border-left: 4px solid #5865F2;
+            padding-left: 30px;
+        }
+        
         h1 {
             color: #5865F2;
             margin-bottom: 10px;
+            font-size: 24px;
         }
+        
         h2 {
             color: #b9bbbe;
             margin-top: 30px;
             margin-bottom: 15px;
             border-bottom: 4px solid #5865F2;
             padding-bottom: 5px;
+            font-size: 18px;
         }
+        
         .account-card {
             background: #1e1f22;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
             border-left: 4px solid #5865F2;
-            line-height: 1;
         }
+        
         .account-card h3 {
             margin-top: 0;
             color: white;
-            line-height: 1;
         }
+        
         .status-info {
             background: #1e1f22;
             padding: 15px;
             border-radius: 8px;
             margin: 20px 0;
-            line-height: 1;
         }
+        
         .cute-gap {
             margin-top: 30px;
             margin-bottom: 20px;
         }
+        
         iframe {
             margin-top: 20px;
             border-radius: 8px;
+            width: 100%;
+            max-width: 350px;
+        }
+        
+        /* Blog post styling */
+        .blog-post {
+            background: #1e1f22;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #ff6b9d;
+        }
+        
+        .blog-post h3 {
+            color: #ff6b9d;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .post-meta {
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .right-column {
+                border-left: none;
+                border-top: 2px solid #5865F2;
+                padding-left: 0;
+                padding-top: 30px;
+                margin-top: 30px;
+            }
         }
     </style>
 </head>
 <body>
     <h1>account tracking & some blogposting</h1>
-    <h2></h2>
     
-    <!-- STATUS_INFO_PLACEHOLDER -->
-    
-    <!-- ACCOUNTS_PLACEHOLDER -->
-    
-    <div class="cute-gap">
-        <h2></h2>
-        <p class="cute-gap">I use this site primarily for making communication easier but also for some blogposting. I came to the conclusion of making this website primarily due to discord's policies and state of using AI and other algorithmic procedures to assist its moderation. Certain patterns & speech can suspend your account even if no ill intention is present, and I have yet to elaborate on that matter through blogposting which will come soon.</p>
-        <p>The main functionality behind this site is that I feed tokens locally and validate them via a discord endpoint, and then automate git push requests to update the static page with the response data which contains my account status.</p>
-        <p>Through the server widget below, you can join my discord server whose purpose is to stay in touch with friends but also banter & discuss topics such as otaku/bishoujo/moe culture, music related topics & some tech related stuff as well.</p>
-        <iframe src="https://discord.com/widget?id=1462029605387899023&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
-        <h2></h2>
-        <p class="cute-gap">post 1: my account @44.uoh got a child safety strike because I posted a tenor GIF in a banter server through the GIF search tab, and I selected a GIF that breaks the guidelines of tenor and discord. I explicitly mentioned that this GIF breaks ToS, however, it did not depict any sexual imagery but rather text and symbolism. This was taken out of context and I received a child safety warning which impacts my account, and appealing this warning won't make a difference as the appeal procedure is not human assisted in any way, and I will not be opening a support ticket on their website as you will receive automated responses for anything appeal related, be it regarding child safety or not. Since the account standing system is designed in a way where catching another chilf safety warning would get you suspended, I have decided not to take the risk and chose to make a new account which is now the 45th iteration. moral of the story: the system can not tell context, and do not attempt to call out certain behaviour as that will likely land you a child safety strike especially if assisted through visuals like the GIF in my case.</p>
-        <p class="cute-gap">post 2: Iteration @45.uoh & @46.uoh has been suspended as I figured I can no longer registered accounts under mullvad VPN because every time I do so, I get phonelocked after joining a certain server through its vanity URL. I also figured that putting an URL in my bio will flag my account as "spam" and force me to re-verify my email for some reason, so I'll have to use the pronouns field and eventually shorten the URL to get around the character limit.</p>
-        <p class="cute-gap">NEXT PAGE UPDATE WILL PUT MY POSTS TO THE RIGHT OF THE SCREEN, WITH CUTE ANIME IMAGES TO THE LEFT !!!!</p>
+    <div class="container">
+        <!-- LEFT COLUMN: Account tracking -->
+        <div class="left-column">
+            <!-- STATUS_INFO_PLACEHOLDER -->
+            
+            <!-- ACCOUNTS_PLACEHOLDER -->
+            
+            <div class="cute-gap">
+                <h2>about this site</h2>
+                <p>I use this site primarily for making communication easier but also for some blogposting. I came to the conclusion of making this website primarily due to discord's policies and state of using AI and other algorithmic procedures to assist its moderation. Certain patterns & speech can suspend your account even if no ill intention is present, and I have yet to elaborate on that matter through blogposting which will come soon.</p>
+                <p>The main functionality behind this site is that I feed tokens locally and validate them via a discord endpoint, and then automate git push requests to update the static page with the response data which contains my account status.</p>
+                <p>Through the server widget below, you can join my discord server whose purpose is to stay in touch with friends but also banter & discuss topics such as otaku/bishoujo/moe culture, music related topics & some tech related stuff as well.</p>
+                <iframe src="https://discord.com/widget?id=1462029605387899023&theme=dark" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+            </div>
+        </div>
+        
+        <!-- RIGHT COLUMN: Blog posts -->
+        <div class="right-column">
+            <h2>blog posts</h2>
+            
+            <div class="blog-post">
+                <h3>regarding @44.uoh</h3>
+                <div class="post-meta">20/01/2026</div>
+                <p>My account @44.uoh got a child safety strike because I posted a tenor GIF in a banter server through the GIF search tab, and I selected a GIF that breaks the guidelines of tenor and discord. I explicitly mentioned that this GIF breaks ToS, however, it did not depict any sexual imagery but rather text and symbolism.</p>
+                <p>This was taken out of context and I received a child safety warning which impacts my account, and appealing this warning won't make a difference as the appeal procedure is not human assisted in any way, and I will not be opening a support ticket on their website as you will receive automated responses for anything appeal related, be it regarding child safety or not.</p>
+                <p>Since the account standing system is designed in a way where catching another child safety warning would get you suspended, I have decided not to take the risk and chose to make a new account which is now the 45th iteration.</p>
+                <p><strong>Moral of the story:</strong> The system cannot tell context, and do not attempt to call out certain behaviour as that will likely land you a child safety strike especially if assisted through visuals like the GIF in my case.</p>
+            </div>
+            
+            <div class="blog-post">
+                <h3>regarding @45.uoh & @46.uoh</h3>
+                <div class="post-meta">20/01/2026</div>
+                <p>Iteration @45.uoh & @46.uoh has been suspended as I figured I can no longer register accounts under Mullvad VPN because every time I do so, I get phonelocked after joining a certain server through its vanity URL.</p>
+                <p>I also figured that putting an URL in my bio will flag my account as "spam" and force me to re-verify my email for some reason, so I'll have to use the pronouns field and eventually shorten the URL to get around the character limit.</p>
+            </div>
+            
+            <div class="blog-post">
+                <h3>changes</h3>
+                <div class="post-meta">20/01/2026</div>
+                <p>planning on adding cute images to the left because why not. also planning on adding a counter like that of a booru</p>
+            </div>
+        </div>
     </div>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Discord Profiles loaded');
+            
+            // Optional: Add some interactivity
+            const blogPosts = document.querySelectorAll('.blog-post');
+            blogPosts.forEach(post => {
+                post.addEventListener('click', function() {
+                    this.style.transform = 'translateX(5px)';
+                    setTimeout(() => {
+                        this.style.transform = 'translateX(0)';
+                    }, 200);
+                });
+            });
         });
     </script>
 </body>
