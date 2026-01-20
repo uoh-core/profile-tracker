@@ -54,18 +54,18 @@ class DiscordMonitor {
 
             if (response.status === 200) {
                 const user = response.data;
-                
+
                 // Extract index from username (assuming format like "44.uoh")
                 const usernameMatch = user.username.match(/^(\d+)/);
                 const indexNum = usernameMatch ? parseInt(usernameMatch[1]) : 0;
                 const index = `${indexNum}${this.getOrdinalSuffix(indexNum)} index`;
-                
+
                 // Format tag
                 const tag = `@${user.username}`;
-                
+
                 // Calculate account creation date from user ID (snowflake)
                 const creationDate = this.snowflakeToDate(user.id);
-                
+
                 return {
                     success: true,
                     accountNumber: accountNumber,
@@ -114,7 +114,7 @@ class DiscordMonitor {
         const discordEpoch = 1420070400000;
         const timestamp = Math.floor(snowflake / 4194304) + discordEpoch;
         const date = new Date(timestamp);
-        
+
         const formatter = new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
             month: 'long',
@@ -125,7 +125,7 @@ class DiscordMonitor {
             timeZone: 'UTC',
             timeZoneName: 'short'
         });
-        
+
         return formatter.format(date);
     }
 
@@ -162,7 +162,7 @@ class DiscordMonitor {
 
         for (const [accountNumber, token] of Object.entries(this.tokens)) {
             console.log(`  Fetching account ${accountNumber}...`);
-            
+
             const result = await this.fetchAccountInfo(token, accountNumber);
             results.push(result);
 
@@ -203,9 +203,8 @@ class DiscordMonitor {
 
     async updateHTML(accountsData) {
         try {
-            // Read template
             let html = await fs.readFile(TEMPLATE_FILE, 'utf8');
-            
+
             const now = new Date();
             const localTime = now.toLocaleString('en-US', {
                 timeZone: 'UTC',
@@ -216,48 +215,57 @@ class DiscordMonitor {
                 minute: '2-digit'
             });
 
-            // Convert accounts object to array and sort
             const accountsArray = Object.values(accountsData.accounts)
                 .filter(account => account && account.indexNum)
                 .sort((a, b) => b.indexNum - a.indexNum);
 
-            // Generate status info HTML
             const activeCount = accountsArray.filter(a => a.status === 'active').length;
             const statusInfoHtml = `
-            <div class="status-info">
-                <p><strong>Last checked:</strong> ${localTime} UTC</p>
-                <p><strong>Total accounts:</strong> ${accountsArray.length}</p>
-                <p><strong>Active accounts:</strong> ${activeCount}</p>
-                <p><em>Updated automatically every ${CHECK_INTERVAL} hour(s)</em></p>
+        <div class="status-info">
+            <p><strong>Last checked:</strong> ${localTime} UTC</p>
+            <p><strong>Total accounts:</strong> ${accountsArray.length}</p>
+            <p><strong>Active accounts:</strong> ${activeCount}</p>
+            <p><em>Updated automatically every ${CHECK_INTERVAL} hour(s)</em></p>
+        </div>
+        `;
+
+            let accountsHtml = '';
+            if (accountsArray.length === 0) {
+                accountsHtml = `
+            <div class="account-card">
+                <h3>No accounts found</h3>
+                <p>Add tokens to your .env file</p>
             </div>
             `;
+            } else {
+                accountsArray.forEach(account => {
+                    const statusColor = account.status === 'active' ? '#43b581' :
+                        account.status === 'invalid' ? '#f04747' : '#faa61a';
+                    const statusText = account.status === 'active' ? '● Active' :
+                        account.status === 'invalid' ? '● Invalid' : '● Unknown';
 
-            // Generate accounts HTML
-            let accountsHtml = '';
-            accountsArray.forEach(account => {
-                const statusColor = account.status === 'active' ? '#43b581' : account.status === 'invalid' ? '#f04747' : '#faa61a';
-                const statusText = account.status === 'active' ? '● Active' : account.status === 'invalid' ? '● Invalid' : '● Unknown';
-                
-                accountsHtml += `
+                    accountsHtml += `
                 <div class="account-card">
-                <h3>${account.index}</h3>
-                <p><strong>tag:</strong> ${account.tag}</p>
-                <p><strong>user id:</strong> ${account.userId}</p>
-                <p><strong>account created:</strong> ${account.creationDate}</p>
-                <p><strong>status:</strong> <span style="color: ${statusColor}">${statusText}</span></p>
-                ${account.lastError ? `<p><em>Error: ${account.lastError}</em></p>` : ''}
-                <p><strong>Last updated: ${new Date(account.lastUpdated).toLocaleString('en-US', { timeZone: 'UTC' })} UTC</strong></p>
+                    <h3>${account.index}</h3>
+                    <p><strong>tag:</strong> ${account.tag}</p>
+                    <p><strong>user id:</strong> ${account.userId}</p>
+                    <p><strong>account created:</strong> ${account.creationDate}</p>
+                    <p><strong>status:</strong> <span style="color: ${statusColor}">${statusText}</span></p>
+                    ${account.lastError ? `<p><em>Error: ${account.lastError}</em></p>` : ''}
+                    <p><strong>Last updated: ${new Date(account.lastUpdated).toLocaleString('en-US', { timeZone: 'UTC' })} UTC</strong></p>
                 </div>
                 `;
-});
+                });
+            }
 
-            // Replace placeholders in template
-            html = html.replace('<!-- STATUS_INFO_PLACEHOLDER -->', statusInfoHtml);
-            html = html.replace('<!-- ACCOUNTS_PLACEHOLDER -->', accountsHtml);
+            const statusPattern = /<!-- STATUS_INFO_PLACEHOLDER -->[\s\S]*?<!-- ACCOUNTS_PLACEHOLDER -->/;
+            const replacement = `<!-- STATUS_INFO_PLACEHOLDER -->\n${statusInfoHtml}\n\n${accountsHtml}\n<!-- ACCOUNTS_PLACEHOLDER -->`;
+
+            html = html.replace(statusPattern, replacement);
 
             await fs.writeFile(HTML_FILE, html, 'utf8');
             console.log(`✅ HTML updated with ${accountsArray.length} accounts`);
-            
+
         } catch (error) {
             console.error('❌ Error updating HTML:', error.message);
         }
@@ -267,7 +275,7 @@ class DiscordMonitor {
         try {
             const simpleGit = require('simple-git');
             const git = simpleGit(REPO_ROOT);
-            
+
             await git.add('.');
             await git.commit(`Update: ${new Date().toISOString()} - ${Object.keys(this.tokens).length} accounts`);
             await git.push();
@@ -279,17 +287,17 @@ class DiscordMonitor {
 
     async runCheck() {
         console.log(`\n⏰ ${new Date().toLocaleTimeString()} - Checking all accounts...`);
-        
+
         const accountsData = await this.fetchAllAccounts();
-        
+
         const successful = accountsData.results.filter(r => r.success).length;
         const total = accountsData.results.length;
-        
+
         console.log(`\n📊 Summary: ${successful}/${total} accounts fetched successfully`);
-        
+
         await this.updateHTML(accountsData);
         await this.commitAndPush();
-        
+
         console.log(`⏰ Next check in ${CHECK_INTERVAL} hour(s)`);
     }
 
@@ -299,12 +307,12 @@ class DiscordMonitor {
         console.log(`Found tokens for accounts: ${Object.keys(this.tokens).join(', ')}`);
         console.log(`Check interval: ${CHECK_INTERVAL} hour(s)`);
         console.log('─'.repeat(50));
-        
+
         this.runCheck();
-        
+
         const cronPattern = `0 */${CHECK_INTERVAL} * * *`;
         cron.schedule(cronPattern, () => this.runCheck());
-        
+
         console.log(`⏰ Scheduled: every ${CHECK_INTERVAL} hour(s)`);
         console.log('─'.repeat(50));
     }
