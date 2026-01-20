@@ -7,7 +7,7 @@ require('dotenv').config();
 // Paths
 const REPO_ROOT = path.join(__dirname, '..');
 const HTML_FILE = path.join(REPO_ROOT, 'index.html');
-const TEMPLATE_FILE = path.join(__dirname, 'template.html');
+const TEMPLATE_FILE = path.join(REPO_ROOT, 'template.html');
 const ACCOUNTS_FILE = path.join(REPO_ROOT, 'accounts.json');
 
 // Configuration
@@ -139,7 +139,7 @@ class DiscordMonitor {
         };
         return reasons[statusCode] || 'unknown_error';
     }
-    
+
     async loadExistingAccounts() {
         try {
             const data = await fs.readFile(ACCOUNTS_FILE, 'utf8');
